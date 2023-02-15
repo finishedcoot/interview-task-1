@@ -32,8 +32,8 @@ export interface CurrenciesDetails {
     }
 
 export interface CurrenciesQuery {
-    vs_currency?:string
-    page?: number
-    per_page?: number
-    price_change_percentage?: string
+    vs_currency?:string | string[]
+    page?: string | string[]
+    per_page?: string | string[]
+    price_change_percentage?: string | string[]
 }
