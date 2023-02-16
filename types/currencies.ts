@@ -27,8 +27,10 @@ export interface CurrenciesDetails {
     atl_date: string | Date,
     roi: null,
     last_updated: string | Date,
+    price_change_percentage_7d_in_currency: number,
     price_change_percentage_24h_in_currency: number,
-    price_change_percentage_7d_in_currency: number
+    price_change_percentage_1h_in_currency: number
+
     }
 
 export interface CurrenciesQuery {

@@ -7,7 +7,7 @@ const CurrenciesList:React.FC<{items:CurrenciesList}> = ({items}) => {
             <h1 className="block w-full py-4 border-b border-primary text-center font-semibold text-primary">Currencies List</h1>
             <ul className="flex flex-col divide-y">
                 {
-                items.map((currency,index)=> <li key={index} className=" px-4 py-2 text-left border-primary text-secondary hover:bg-slate-900">
+                    items && items.map((currency,index)=> <li key={index} className=" px-4 py-2 text-left border-primary text-secondary hover:bg-slate-900">
                 {currency}   
                 </li>
                 )}
