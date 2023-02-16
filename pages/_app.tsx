@@ -1,11 +1,19 @@
 import DefaultLayouts from "@/components/Layout";
 import "@/styles/globals.css";
-import type { AppProps } from "next/app";
+import type {AppProps} from "next/app";
+import {Hydrate, QueryClient, QueryClientProvider} from '@tanstack/react-query';
+import {useState} from "react";
 
-export default function App({ Component, pageProps }: AppProps) {
+export default function App({Component, pageProps}: AppProps) {
+    const [queryClient] = useState(() => new QueryClient({}))
+
     return (
-        <DefaultLayouts>
-            <Component {...pageProps} />
-        </DefaultLayouts>
+        <QueryClientProvider client={queryClient}>
+            <Hydrate state={pageProps.dehydratedState}>
+                <DefaultLayouts>
+                    <Component {...pageProps} />
+                </DefaultLayouts>
+            </Hydrate>
+        </QueryClientProvider>
     );
 }

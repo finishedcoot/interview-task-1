@@ -1,8 +1,12 @@
 import { CurrenciesDetails } from "@/types/currencies";
 import DetailsRow from "@/components/DetailsRow";
 import React from "react";
+import {useQuery} from "@tanstack/react-query";
+import {QueryKeys} from "@/enums/query";
+import {fetchCurrenciesDetails, fetchSupportedCurrenciesList} from "@/services/currencies";
 
-const CurrenciesDetails: React.FC<{ items: CurrenciesDetails[] }> = ({ items }) => {
+const CurrenciesDetails: React.FC = () => {
+    const { data } = useQuery({ queryKey: [QueryKeys.CURRENCIES_DETAILS], queryFn:()=>fetchCurrenciesDetails()})
 
     const changeOrderByType = (e:any) => {
         console.log(e.target.dataset['columnSubject'])
@@ -28,7 +32,7 @@ const CurrenciesDetails: React.FC<{ items: CurrenciesDetails[] }> = ({ items }) 
                         <td className="table-cell text-sm text-right text-slate-200 cursor-pointer" data-column-subject={'market_cap'} onClick={(e)=>changeOrderByType(e)}> Mkt Cap</td>
                     </tr>
                 </thead>
-                <tbody>{items && items.map((item, index) => <DetailsRow key={index} item={item} index={index} />)}</tbody>
+                <tbody>{data && data.map((item, index) => <DetailsRow key={index} item={item} index={index} />)}</tbody>
             </table>
         </div>
     );

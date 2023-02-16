@@ -6,9 +6,11 @@ import Head from "next/head";
 import CurrenciesDetails from "@/components/CurrenciesDetails";
 import {fetchCurrenciesDetails} from "@/services/currencies";
 import { DefaultQuery } from "@/constants/Query";
+import {dehydrate, QueryClient} from "@tanstack/react-query";
+import {QueryKeys} from "@/enums/query";
 
 const Details: NextPage<DetailsPage> = ({ details }) => {
-    console.log(details,'client')
+
     return (
         <>
             <Head>
@@ -17,7 +19,7 @@ const Details: NextPage<DetailsPage> = ({ details }) => {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <CurrenciesDetails items={details} />
+            <CurrenciesDetails/>
         </>
     );
 };
@@ -26,17 +28,18 @@ export const getServerSideProps: GetServerSideProps = async ({
     query: { vs_currency, page, per_page, price_change_percentage },
 }) => {
     try {
-        const details = await fetchCurrenciesDetails({
+
+        const queryClient = new QueryClient()
+        await queryClient.prefetchQuery([QueryKeys.CURRENCIES_DETAILS],()=> fetchCurrenciesDetails({
             vs_currency: vs_currency || DefaultQuery.vs_currency,
             page: page || DefaultQuery.page,
             per_page: per_page || DefaultQuery.per_page,
             price_change_percentage: price_change_percentage || DefaultQuery.price_change_percentage,
-        });
-        console.log(details,'server')
+        }))
 
         return {
             props: {
-                details,
+                dehydratedState: dehydrate(queryClient),
             },
         };
     } catch (e: AxiosError | any) {
