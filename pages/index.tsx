@@ -7,8 +7,12 @@ import CurrenciesList from "@/components/CurrenciesList";
 import {dehydrate, QueryClient, } from "@tanstack/react-query";
 import {QueryKeys} from "@/enums/query";
 import {PageError} from "@/types/errors";
+import SimpleError from "@/components/SimpleError";
 
 const Currencies: NextPage<PageError> = ({ error }) => {
+    if(error){
+        return <SimpleError error={error}/>
+    }
 
     return (
         <>

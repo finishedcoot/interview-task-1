@@ -1,9 +1,9 @@
 export enum ApiEndPoints {
-    CURRENCIES_LIST = '/coins/list',
     SUPPORTED_CURRENCIES_API = '/simple/supported_vs_currencies',
-    MARKETS_API = '/coins/markets'
+    MARKETS_API = '/coins/markets',
+    CATEGORIES_LIST = '/coins/categories/list'
 }
 
-export enum EndPoints {
+export enum SPAEndPoints {
     details = '/details'
 }
