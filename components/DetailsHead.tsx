@@ -1,3 +1,5 @@
+import React from "react";
+
 const DetailsHead: React.FC = () => {
     return (
         <div className="grid col-span-6">

@@ -1,12 +1,19 @@
 import { GetServerSideProps, NextPage } from "next";
 import { AxiosError } from "axios";
-import { HomePage } from "@/types/pages";
 import { Error } from "@/constants/Errors";
 import Head from "next/head";
 import { fetchSupportedCurrenciesList } from "@/services/currencies";
 import CurrenciesList from "@/components/CurrenciesList";
+import {dehydrate, QueryClient, } from "@tanstack/react-query";
+import {QueryKeys} from "@/enums/query";
+import {PageError} from "@/types/errors";
+import SimpleError from "@/components/SimpleError";
 
-const Currencies: NextPage<HomePage> = ({ currencies }) => {
+const Currencies: NextPage<PageError> = ({ error }) => {
+    if(error){
+        return <SimpleError error={error}/>
+    }
+
     return (
         <>
             <Head>
@@ -15,18 +22,21 @@ const Currencies: NextPage<HomePage> = ({ currencies }) => {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <CurrenciesList items={currencies} />
+            <CurrenciesList/>
         </>
     );
 };
 
 export const getServerSideProps: GetServerSideProps = async () => {
+
     try {
-        const currencies = await fetchSupportedCurrenciesList();
+        const queryClient = new QueryClient()
+
+        await queryClient.prefetchQuery([QueryKeys.CURRENCIES_LIST], fetchSupportedCurrenciesList)
 
         return {
             props: {
-                currencies,
+                dehydratedState: dehydrate(queryClient),
             },
         };
     } catch (e: AxiosError | any) {

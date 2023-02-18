@@ -30,12 +30,18 @@ export interface CurrenciesDetails {
     price_change_percentage_7d_in_currency: number,
     price_change_percentage_24h_in_currency: number,
     price_change_percentage_1h_in_currency: number
-
-    }
+}
 
 export interface CurrenciesQuery {
-    vs_currency?:string | string[]
+    vs_currency?: string | string[]
+    ids?: string
+    category?: string
     page?: string | string[]
     per_page?: string | string[]
     price_change_percentage?: string | string[]
+}
+
+export interface CurrencyCategory {
+    category_id:string
+    name:string
 }

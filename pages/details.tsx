@@ -1,14 +1,20 @@
 import { GetServerSideProps, NextPage } from "next";
 import { AxiosError } from "axios";
-import { DetailsPage } from "@/types/pages";
 import { Error } from "@/constants/Errors";
 import Head from "next/head";
 import CurrenciesDetails from "@/components/CurrenciesDetails";
-import {fetchCurrenciesDetails} from "@/services/currencies";
+import {fetchAllCategories, fetchCurrenciesDetails} from "@/services/currencies";
 import { DefaultQuery } from "@/constants/Query";
+import {dehydrate, QueryClient} from "@tanstack/react-query";
+import {QueryKeys} from "@/enums/query";
+import {PageError} from "@/types/errors";
+import SimpleError from "@/components/SimpleError";
 
-const Details: NextPage<DetailsPage> = ({ details }) => {
-    console.log(details,'client')
+const Details: NextPage<PageError> = ({error}) => {
+if(error){
+    return <SimpleError error={error}/>
+}
+
     return (
         <>
             <Head>
@@ -17,26 +23,31 @@ const Details: NextPage<DetailsPage> = ({ details }) => {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <CurrenciesDetails items={details} />
+            <CurrenciesDetails/>
         </>
     );
 };
 
 export const getServerSideProps: GetServerSideProps = async ({
-    query: { vs_currency, page, per_page, price_change_percentage },
+    query: { vs_currency, page, per_page, price_change_percentage, category },resolvedUrl
 }) => {
+
     try {
-        const details = await fetchCurrenciesDetails({
+        const queryClient = new QueryClient()
+
+        await queryClient.prefetchQuery([QueryKeys.CURRENCIES_DETAILS,resolvedUrl],()=> fetchCurrenciesDetails({
             vs_currency: vs_currency || DefaultQuery.vs_currency,
             page: page || DefaultQuery.page,
             per_page: per_page || DefaultQuery.per_page,
             price_change_percentage: price_change_percentage || DefaultQuery.price_change_percentage,
-        });
-        console.log(details,'server')
+            category: category as string
+        }))
+
+        await queryClient.prefetchQuery([QueryKeys.CURRENCIES_CATEGORIES], fetchAllCategories)
 
         return {
             props: {
-                details,
+                dehydratedState: dehydrate(queryClient),
             },
         };
     } catch (e: AxiosError | any) {
